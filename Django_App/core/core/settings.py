@@ -37,6 +37,10 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+
+    ##Add the app here
+    "climate_story",
+    "rest_framework",
 ]
 
 MIDDLEWARE = [
