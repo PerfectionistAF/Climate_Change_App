@@ -15,4 +15,7 @@ class Emissions(models.Model):
     low_carbon_electricity = models.FloatField()
     created = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return self.entity
+
 
