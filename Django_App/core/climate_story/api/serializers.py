@@ -1,10 +1,10 @@
 ##STEP 1: create serializers for api, rest framework
 from rest_framework import serializers
-from climate_story.models import ClimateStory
+from climate_story.models import Emissions
 
 class EmissionsSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ClimateStory
+        model = Emissions
         fields = (   ##cast fields in a tuple
             'id',
             'entity',
