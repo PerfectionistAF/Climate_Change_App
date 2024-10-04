@@ -39,3 +39,15 @@ st.line_chart(country_data[['Year', 'IS dC_loss (TgCO2)', 'LNLG dC_loss (TgCO2)'
 # Show additional statistics if needed
 st.subheader("Summary Statistics")
 st.write(country_data.describe())
+
+
+##Session state
+if 'counter' not in st.session_state:
+    st.session_state.counter = 0
+
+##test button 
+##PRESSED TO GENERATE SUMMARY FROM LLMs
+if st.button("Increment"):
+    st.session_state.counter += 1
+
+st.write(f"Counter: {st.session_state.counter}")
