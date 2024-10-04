@@ -102,9 +102,17 @@ import pandas as pd
 
 file_path = "../Data/pilot_topdown_CO2_Budget_countries_v1.csv"
 data = pd.read_csv(file_path)
-preprocessed_data = data.to_string()
+
+target_country_code = 'USA'
+country_data = data[data['Alpha 3 Code'] == target_country_code]
+
+if not country_data.empty:
+    preprocessed_data = country_data.to_string()
+else:
+    preprocessed_data = "No data available for the specified country."
+
 initial_state = {
-    'messages': [{'role' : "user","content":preprocessed_data}],
+    'messages': [{'role' : "user", "content" : preprocessed_data}],
     'revision_times': 0
 }
 output = writer.graph.invoke(initial_state, {'configurable' : {'thread_id' : 1, 'checkpoint_ns' : 0, 'checkpoint_id' : 0}})
