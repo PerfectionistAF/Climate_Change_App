@@ -16,6 +16,6 @@ class Emissions(models.Model):
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.entity
+        return f"{self.entity} id: {self.id}"  ##return a string
 
 

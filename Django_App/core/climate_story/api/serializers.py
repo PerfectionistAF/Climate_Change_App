@@ -1,6 +1,6 @@
-##STEP 1: create serializers for api, rest framework
+##STEP 1: create serializers for api, rest framework, suitable format
 from rest_framework import serializers
-from climate_story.models import Emissions
+from ..models import Emissions
 
 class EmissionsSerializer(serializers.ModelSerializer):
     class Meta:
