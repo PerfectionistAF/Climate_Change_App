@@ -15,6 +15,7 @@ class State(TypedDict):
 
 class Writer:
     def __init__(self, llm = llm):
+        self.llm = llm 
         workflow = StateGraph(State)
         
         workflow.add_node('writer', self.writer_call)
@@ -34,7 +35,7 @@ class Writer:
         system_prompt = f"""
         You are an excellent data analysis and a story teller, you are to write a story about the given data.
         """
-        input = state['messages'][0]
+        input = str(state['messages'][0])
     
         writer_list = [{
                 'role' : 'system',
@@ -53,7 +54,7 @@ class Writer:
                     'content' : f"please review these notes and writer based on them {state['messages'][-1]}"
                 }
             )
-        output = llm.call(writer_list)
+        output = self.llm.call(writer_list)
         return {'messages' :  str(output)}
         
     
@@ -65,7 +66,7 @@ class Writer:
         system_prompt = f"""
         You are a professional story critique, given a written story, please give detailed feedback, and what to be improved.
         """
-        writer_output = state['message'][-1]
+        writer_output = state['messages'][-1]
         
         critic_list = [{
                 'role' : 'system',
@@ -102,7 +103,6 @@ import pandas as pd
 file_path = "../Data/pilot_topdown_CO2_Budget_countries_v1.csv"
 data = pd.read_csv(file_path)
 preprocessed_data = data.to_string()
-writer = Writer()
 initial_state = {
     'messages': [{'role' : "user","content":preprocessed_data}],
     'revision_times': 0
