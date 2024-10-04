@@ -48,13 +48,15 @@ class Writer:
         ]
         
         if state['revision_times'] > 0:
+            last_message = str(state['messages'][-1])  # Ensure this is a string
             writer_list.append(
                 {
                     'role' : "user",
-                    'content' : f"please review these notes and writer based on them {state['messages'][-1]}"
+                    'content' : f"please review these notes and writer based on them {last_message}"
                 }
             )
         output = self.llm.call(writer_list)
+        print(f"Writer Output: {output}")  # Debug line
         return {'messages' :  str(output)}
         
     
@@ -66,7 +68,7 @@ class Writer:
         system_prompt = f"""
         You are a professional story critique, given a written story, please give detailed feedback, and what to be improved.
         """
-        writer_output = state['messages'][-1]
+        writer_output = str(state['messages'][-1])
         
         critic_list = [{
                 'role' : 'system',
@@ -78,6 +80,7 @@ class Writer:
             }
         ]
         output = self.llm.call(critic_list)
+        print(f"Critic Output: {output}")  # Debug line
 
         previous_revision_times = state['revision_times']
         return {'messages' :  str(output), 'revision_times' : previous_revision_times + 1}
