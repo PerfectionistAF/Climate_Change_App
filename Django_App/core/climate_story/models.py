@@ -16,7 +16,7 @@ class Emissions(models.Model):
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.entity} id: {self.id}"  ##return a string
+        return f"{self.entity}"  ##return a string
 
 class CarbonStock(models.Model):
     alpha_code = models.TextField(max_length=100)
