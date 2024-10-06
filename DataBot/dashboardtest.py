@@ -145,26 +145,6 @@ st.line_chart(country_data[['Year', 'IS dC_loss (TgCO2)', 'IS NBE (TgCO2)',
 ]].set_index('Year'))
 
 
-#api_key = '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'
-#client = openai.OpenAI(api_key=api_key)
-#prompt= map_df[map_df['Alpha 3 Code'] == selected_country]['Country'].values[0]
-
-#def generate_image(prompt):
-#    response = client.Image(
-#        prompt=prompt,
-#        n=1,
-#        size="512x512"
-#    )
-#    image_url = response['data'][0]['url']
-#    return image_url
-
-
-#image_url = generate_image(prompt)
-#response = requests.get(image_url)
-#img = Image.open(BytesIO(response.content))
-#st.image(img)'''
-
-
 st.subheader("Donut Chart of Carbon Stock Losses for 2024")
 latest_year = country_data['Year'].max()
 latest_data = country_data[country_data['Year'] == latest_year]
