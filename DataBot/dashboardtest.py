@@ -56,7 +56,7 @@ data_io = io.StringIO(data)
 data = pd.read_csv(data_io)
 
 # Set up the Streamlit app
-st.title("CO2 Loss Data Dashboard")
+st.title("Carbon Stock Loss Data Dashboard")
 st.write("This dashboard displays CO2 loss data for different countries over several years.")
 
 # Allow users to select a country
