@@ -4,6 +4,10 @@ import matplotlib.pyplot as plt
 import requests
 import altair as alt
 import numpy as np
+import pickle as pkl
+import folium
+import folium.plugins
+from folium import Map, TileLayer
 
 
 # Load data
@@ -65,6 +69,8 @@ Argentina,2005,96.863846,97.5,234.67,59.89,6.37,34.6,40.620663,-38.416097,-63.61
 # Convert the string data into a DataFrame
 from io import StringIO
 df = pd.read_csv(StringIO(data))
+#use pickle to read the map_df
+map_df = pkl.load(open('merged_data.pkl', 'rb'))
 
 
 ##Function for endpoint=====CHANGE HER TO ADD VISUALIZATIONS
@@ -89,6 +95,35 @@ def send_data(entity, year, electricity_access, cooking_fuel_access,
     }
     response = requests.post(api_url, data=data)
     return response.json()
+
+def generate_map(map_df, country, year = 2020, threshold = 0, criterion = 'IS NBE (TgCO2)'):
+    # Filter the data for the selected country
+    merged_data = map_df[map_df['Alpha 3 Code'] == country]
+    # Create a base world map
+    world_map = folium.Map(location=[merged_data['Latitude'].mean(), merged_data['Longitude'].mean()], zoom_start=2)
+    # Add markers for each country
+    world_map = folium.Map(location=[0, 0], zoom_start=2)
+
+    # Prepare data for the heatmap
+    heat_data = [[row['Latitude (average)'], row['Longitude (average)'], row[criterion]] for index, row in merged_data.iterrows()]
+
+    # Add the heatmap layer
+    HeatMap(heat_data).add_to(world_map)
+    # Add markers for each country
+    for _, row in map_df.iterrows():
+        if row['Year'] != year:
+            continue
+        
+        folium.Marker(
+            location=[row['Latitude (average)'], row['Longitude (average)']],
+            popup=f"{row['Alpha 3 Code']}: {row['IS NBE (TgCO2)']} TgCO2",
+            icon=folium.Icon(color='blue' if row['IS NBE (TgCO2)'] < threshold else 'red')
+        ).add_to(world_map)
+
+    # Display the map in the notebook
+    return world_map
+
+
 
 
 # Streamlit app
