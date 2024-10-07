@@ -144,6 +144,23 @@ st.line_chart(country_data[['Year', 'IS dC_loss (TgCO2)', 'IS NBE (TgCO2)',
     'Rivers (TgCO2)', 'Wood+Crop (TgCO2)', 'FF (TgCO2)'
 ]].set_index('Year'))
 
+# Display image using Unsplash API
+unsplash_access_key = 'aurWfor2DcWtwCaNwT-Shd0hDFxEnfuPxnbBiDbG6go'
+
+def search_unsplash(query):
+    url = f"https://api.unsplash.com/search/photos?query={query}&client_id={unsplash_access_key}"
+    response = requests.get(url)
+    data = response.json()
+    if data['results']:
+        return data['results'][0]['urls']['regular']
+    return None
+
+st.write("Search for photos using Unsplash.")
+prompt = map_df[map_df['Alpha 3 Code'] == selected_country]['Country'].values[0]
+photo_url = search_unsplash(prompt)
+response = requests.get(photo_url)
+img = Image.open(BytesIO(response.content))
+st.image(img, caption=f"First Photo for: {prompt}")
 
 st.subheader("Donut Chart of Carbon Stock Losses for 2024")
 latest_year = country_data['Year'].max()
