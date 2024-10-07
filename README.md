@@ -1,4 +1,4 @@
-# Climate_Change_App: NASA Space Apps 2024 Challenge
+# Climate Change App: NASA Space Apps 2024 Challenge
 
-[streamlit-dashboardtest-2024-10-06-18-10-43.webm](https://github.com/user-attachments/assets/ebcd63b2-08f0-4016-9564-4ecbc1788729)
+Uploading streamlit-dashboardtest-2024-10-07-19-10-88.mp4…
 
