@@ -4,7 +4,7 @@ from groq import Groq
 import time
 
 # Initialize Groq client with API key
-client = Groq(api_key="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")
+client = Groq(api_key="")
 
 def preprocess_input_data(data):
     """
