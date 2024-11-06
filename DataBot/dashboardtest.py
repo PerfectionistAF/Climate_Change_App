@@ -9,6 +9,11 @@ import folium
 from folium.plugins import HeatMap
 from folium import Map, TileLayer
 from streamlit_folium import st_folium
+import altair as alt
+import openai
+from PIL import Image
+import requests
+from io import BytesIO
 
 map_df = pkl.load(open('merged_data.pkl', 'rb'))
 def generate_map(map_df, country, year = 2020, threshold = 0, criterion = 'IS NBE (TgCO2)'):
@@ -100,7 +105,7 @@ countries = data['Alpha 3 Code'].unique()
 selected_country = st.sidebar.selectbox("Select Country", countries)
 
 # Call the function to generate the map and display it in the Streamlit app
-st.subheader(f"Latest Carbon Stock Loss Heatmap for {map_df[map_df['Alpha 3 Code'] == selected_country]['Country'].values[0]}")
+st.subheader(f"2024 Carbon Stock Loss Heatmap for {map_df[map_df['Alpha 3 Code'] == selected_country]['Country'].values[0]}")
 st_folium(generate_map(map_df, selected_country), height=500)
 
 # Filter the data based on the selected country
@@ -117,8 +122,8 @@ data_io = io.StringIO(preprocessed_data)
 df = pd.read_csv(data_io)
 
 # Show the data in a table
-st.subheader("Data Table")
-st.dataframe(df)
+#st.subheader("Data Table")
+#st.dataframe(df)
 
 initial_state = {
     'messages': [{'role': "user", "content": preprocessed_data}],
@@ -129,14 +134,44 @@ writer = Writer()
 if st.button("Generate Summary"):
     output = writer.graph.invoke(initial_state, {'configurable': {'thread_id': 1, 'checkpoint_ns': 0, 'checkpoint_id': 0}})
     st.sidebar.subheader("Generated Summary")
-    st.sidebar.write(output['messages'][1:])
+    st.sidebar.write(output['messages'][1:5])
+    st.write(output['messages'][1])
 
 # Display country data
-st.subheader(f"Anthropogenic Carbon Stock Loss Data for {selected_country}")
+st.subheader(f"Anthropogenic Carbon Stock Loss Data for {map_df[map_df['Alpha 3 Code'] == selected_country]['Country'].values[0]}")
 st.line_chart(country_data[['Year', 'IS dC_loss (TgCO2)', 'IS NBE (TgCO2)',
     'IS NCE (TgCO2)',
     'Rivers (TgCO2)', 'Wood+Crop (TgCO2)', 'FF (TgCO2)'
 ]].set_index('Year'))
+
+# Display image using Unsplash API
+unsplash_access_key = 'aurWfor2DcWtwCaNwT-Shd0hDFxEnfuPxnbBiDbG6go'
+
+def search_unsplash(query):
+    url = f"https://api.unsplash.com/search/photos?query={query}&client_id={unsplash_access_key}"
+    response = requests.get(url)
+    data = response.json()
+    if data['results']:
+        return data['results'][0]['urls']['regular']
+    return None
+
+st.write("Search for photos using Unsplash.")
+prompt = map_df[map_df['Alpha 3 Code'] == selected_country]['Country'].values[0]
+photo_url = search_unsplash(prompt)
+response = requests.get(photo_url)
+img = Image.open(BytesIO(response.content))
+st.image(img, caption=f"First Photo for: {prompt}")
+
+st.subheader("Donut Chart of Carbon Stock Losses for 2024")
+latest_year = country_data['Year'].max()
+latest_data = country_data[country_data['Year'] == latest_year]
+latest_data_melted = latest_data.melt(id_vars=['Year'], value_vars=['IS dC_loss (TgCO2)', 'IS NBE (TgCO2)', 'IS NCE (TgCO2)', 'Rivers (TgCO2)', 'Wood+Crop (TgCO2)', 'FF (TgCO2)'])
+donut_chart = alt.Chart(latest_data_melted).mark_arc(innerRadius=50).encode(
+    theta='value:Q',
+    color='variable:N',
+    tooltip=['variable', 'value']
+)
+st.altair_chart(donut_chart, use_container_width=True)
 
 # Show additional statistics if needed
 st.subheader("Summary Statistics")

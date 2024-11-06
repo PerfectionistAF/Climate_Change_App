@@ -7,3 +7,4 @@ emissions_router = DefaultRouter()
 ##path for url route for the model
 ##aliasing
 emissions_router.register(r'emissions', EmissionsViewSet)#, basename='emissions')
+
